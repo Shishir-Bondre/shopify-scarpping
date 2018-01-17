@@ -8,9 +8,10 @@ store_ranking=[]
 store_facebook_details=[]
 store_notListed=[]
 noRec=0
-def getStoreNames(url,pageNo):
-    pageNo=int(pageNo)+1
-    for inc in range(1,pageNo):
+def getStoreNames(url,fromPageNo,toPageNo):
+    toPageNo=int(toPageNo)+1
+    fromPageNo=int(fromPageNo)
+    for inc in range(fromPageNo,toPageNo):
         no=str(inc)
         page_url=url+'?orderby=rating%20asc&page='+no
         res = urllib.urlopen(page_url).read()
@@ -25,29 +26,43 @@ def getStoreNames(url,pageNo):
                 store_ranking.append(secondColumn[i].get_text())
             if(i==199):
                 store_ranking.append(secondColumn[199].get_text())
-    store_details=pd.DataFrame({'Name': store_name,'Link': store_link,'Ranking': store_ranking})
-    print store_details
-    noRec=len(store_name)
-    print noRec
-def getStoreDetails(store_name,noRec):
-    graph = facebook.GraphAPI(access_token="EAACEdEose0cBAObf8y5euJl89ZAr6I139gZAgQqvRWigWqZC5Hiu7QOVEkrkQiVfodGn0JwEzZANdyC94XJhsORIIRTmF6CwnKUZCecbvyRfuktZCg6eHQnuegewu9CpEdCDOI3Bd3BCjYeM7bKEZBsB6WlHy7DptGTMz8EdJ2qQdFnpzAq6Ums3ji2tT7WMHfRnR0GhYo5QQZDZD", version="2.11")
+    store_details=pd.DataFrame({'name': store_name,'Link': store_link,'Ranking': store_ranking})
+    store_details.to_csv("orginalScrapped.csv",encoding='utf-8')
+    print "Got Stores Successfully"
+    print "========================="
+    print len(store_name)
+def getStoreDetails(store_name,noRec,accessToken):
+    graph = facebook.GraphAPI(access_token=accessToken, version="2.11")
     for i in range(0,noRec):
         name=store_name[i]
         try :
-          store_facebook_details.append(graph.get_object(id=name, fields='id,name,emails,category'))
+          store_facebook_details.append(graph.get_object(id=name, fields='id,name,emails,category,link,fan_count,website'))
         except :
           store_notListed.append(name)
     notFacebookStores = pd.DataFrame(store_notListed)
     facebookStores = pd.DataFrame(store_facebook_details)
-    print ("This are the stores with full details ")
-    print ("======================================")
-    print facebookStores
-    print("==========================================")
-    print ("This are the stores which do not have details ")
-    print ("======================================")
-    print notFacebookStores
-    print("=========================================")
-    print noRec
+    notFacebookStores.to_csv("notFacebook.csv",encoding='utf-8')
+    facebookStores.to_csv("storeDetails.csv",encoding='utf-8')
+    print "Got facebook details Successfully"
+    print "========================="
+    print "No of Store with full details : "
+    print len(store_facebook_details)
+    print "========================="
+    print "No of Store with no details : "
+    print len(store_notListed)
 
-getStoreNames("http://xpareto.com/",1)
-getStoreDetails(store_name,99)
+# this is the main fuction calling the above two functions
+
+#link = raw_input("Enter the Link for Scrapping the Details")
+fromPageNo=raw_input("Enter page No to be begin scarpping : ")
+toPageNo=raw_input("Enter page No to be end scarpping : ")
+#accessToken= raw_input("Enter Facebook access Token")
+
+getStoreNames("http://xpareto.com/",fromPageNo,toPageNo)
+noRec=len(store_name)
+accessToken="EAACEdEose0cBAI9Rs7iL2P38a4ph0TWj1sFresZCA22w9aKM3j8hLJT7vRKE751qbSJmvViGgSZALbIB77ZArpvNkm8RgbOUisIkdZBFgZBsNho9cufB4E5VXiegfuiZCTzmJ5svZCBn9xjDDbxDT9bU5OZBWmwA4SRqZAzI9PMEJ1kG4NFRu565ApMcNH8bPMlLj3CqJwjZCmXQZDZD"
+getStoreDetails(store_name,noRec,accessToken)
+#storedetailsfrist=pd.read_csv("orginalScrapped.csv")
+#storedetailssecond=pd.read_csv("storeDetails.csv")
+#finalstore=pd.concat([storedetailsfrist,storedetailssecond], on='name',join='inner')
+#finalstore.to_csv("final.csv",encoding='utf-8')
