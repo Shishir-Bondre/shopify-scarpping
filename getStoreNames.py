@@ -27,7 +27,7 @@ def getStoreNames(url,fromPageNo,toPageNo):
             if(i==199):
                 store_ranking.append(secondColumn[199].get_text())
     store_details=pd.DataFrame({'name': store_name,'Link': store_link,'Ranking': store_ranking})
-    store_details.to_csv("orginalScrapped.csv",encoding='utf-8')
+    store_details.to_csv("csv/orginalScrapped.csv",encoding='utf-8')
     print "Got Stores Successfully"
     print "========================="
     print len(store_name)
@@ -41,8 +41,8 @@ def getStoreDetails(store_name,noRec,accessToken):
           store_notListed.append(name)
     notFacebookStores = pd.DataFrame(store_notListed)
     facebookStores = pd.DataFrame(store_facebook_details)
-    notFacebookStores.to_csv("notFacebook.csv",encoding='utf-8')
-    facebookStores.to_csv("storeDetails.csv",encoding='utf-8')
+    notFacebookStores.to_csv("csv/notFacebook.csv",encoding='utf-8')
+    facebookStores.to_csv("csv/storeDetails.csv",encoding='utf-8')
     print "Got facebook details Successfully"
     print "========================="
     print "No of Store with full details : "
