@@ -8,8 +8,11 @@
 - Email id
 - Facebook Page Id
 - Facebook Page Name
+- About
+- Instagram URL
 - Facebook Page Link
 - Subscribers
+- Alexa Ranking
 
 ### Contains :
 - How To Use

@@ -5,7 +5,18 @@ import facebook
 store_name=[]
 store_link=[]
 store_ranking=[]
-store_facebook_details=[]
+store=[]
+about=[]
+category=[]
+email=[]
+website=[]
+ranking=[]
+fb_id=[]
+link=[]
+fan_count=[]
+insta=[]
+
+#store_facebook_details=[]
 store_notListed=[]
 noRec=0
 def getStoreNames(url,fromPageNo,toPageNo):
@@ -33,34 +44,59 @@ def getStoreNames(url,fromPageNo,toPageNo):
     print len(store_name)
 def getStoreDetails(store_name,noRec,accessToken):
     graph = facebook.GraphAPI(access_token=accessToken, version="2.11")
+    count=1
+    print "============================="
     for i in range(0,noRec):
         name=store_name[i]
+        instagram="https://www.instagram.com/"+name
         try :
-          store_facebook_details.append(graph.get_object(id=name, fields='id,name,emails,category,link,fan_count,website'))
+          facebook_data=graph.get_object(id=name, fields='name,category,emails,link,fan_count,about,website')
+          email.append(facebook_data.get('emails'))
+          link.append(facebook_data.get('link'))
+          fan_count.append(facebook_data.get('fan_count'))
+          about.append(facebook_data.get('about'))
+          website.append(facebook_data.get('website'))
+          fb_id.append(facebook_data.get('id'))
+          category.append(facebook_data.get('category'))
+          store.append(facebook_data.get('name'))
+          ranking.append(store_ranking[i])
+          insta.append(instagram)
+          count+=1
         except :
           store_notListed.append(name)
+   # print "===================="
+   # print len(insta)
+   # print len(ranking)
+   # print len(store)
+   # print len(email)
+   # print len(link)
+   # print len(fan_count)
+   # print len(about)
+   # print len(website)
+   # print len(ranking)
+   # print len(fb_id)
+   # print len(category)
+   # print "========================================"
+    facebookStores = pd.DataFrame({'name': store, 'about': about, 'category':category, 'email':email,'Link': website,'Ranking': ranking,'facebook page': link,'facebook subscribers': fan_count,'instagram Url':insta})
+    #print facebookStores
     notFacebookStores = pd.DataFrame(store_notListed)
-    facebookStores = pd.DataFrame(store_facebook_details)
+
     notFacebookStores.to_csv("csv/notFacebook.csv",encoding='utf-8')
     facebookStores.to_csv("csv/storeDetails.csv",encoding='utf-8')
-    print "Got facebook details Successfully"
+    print "Got facebook details Successfully Total records fetched"
     print "========================="
-    print "No of Store with full details : "
-    print len(store_facebook_details)
+    print count
     print "========================="
-    print "No of Store with no details : "
-    print len(store_notListed)
-
 # this is the main fuction calling the above two functions
 
 #link = raw_input("Enter the Link for Scrapping the Details")
-fromPageNo=raw_input("Enter page No to be begin scarpping : ")
-toPageNo=raw_input("Enter page No to be end scarpping : ")
+fromPageNo=raw_input("Enter page No to begin scarpping : ")
+toPageNo=raw_input("Enter page No to end scarpping : ")
 #accessToken= raw_input("Enter Facebook access Token")
 
 getStoreNames("http://xpareto.com/",fromPageNo,toPageNo)
 noRec=len(store_name)
-accessToken="EAACEdEose0cBAI9Rs7iL2P38a4ph0TWj1sFresZCA22w9aKM3j8hLJT7vRKE751qbSJmvViGgSZALbIB77ZArpvNkm8RgbOUisIkdZBFgZBsNho9cufB4E5VXiegfuiZCTzmJ5svZCBn9xjDDbxDT9bU5OZBWmwA4SRqZAzI9PMEJ1kG4NFRu565ApMcNH8bPMlLj3CqJwjZCmXQZDZD"
+accessToken="EAACEdEose0cBAKNnKJqk7EcGIDjqqrrvX3pdDKm0cM7ODptM6PeEkYd0xA5GV4joB3VuKl5wXFvWIUFDLhvtu0AOs5LvSbzKvdRCqhmxZAdpD3NjJ3quw5arC7KC0gO3bwSrmofZCYrOZCeWJZBN13pB6LP8zO27xOaVjwKRJxr2F4EG5gfLx34m5HzjZCZANksQHF5nzF2gZDZD"
 getStoreDetails(store_name,noRec,accessToken)
 #storedetailsfrist=pd.read_csv("orginalScrapped.csv")
 #storedetailssecond=pd.read_csv("storeDetails.csv")
