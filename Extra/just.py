@@ -1,0 +1,22 @@
+import pandas as pd
+AppNames=['pushcrew',
+            'wistia',
+            'powr',
+            'optimonk',
+            'optimizely',
+            'loox',
+            'yotpo',
+            'judge',
+            'product',
+            'jozi',
+            'feefo',
+            'globo',
+            'recart',
+            'kit',
+            'manycart',
+            'salespop',
+          'shopify',
+          'chatchamp',
+          'appsbysimple']
+app=pd.DataFrame({'apps':AppNames})
+app.to_csv("csv/appDetails/app.csv",encoding='utf-8')
